@@ -76,6 +76,32 @@ app.post('/api/submissions', (req, res) => {
   res.status(201).json({ message: 'Submission received', data: newSubmission });
 });
 
+// GET status ของ submission โดย user (ใช้ใน Profile.js)
+app.get('/api/submissions/:id', (req, res) => {
+  const submission = submissions.find(s => s.id === parseInt(req.params.id));
+  if (!submission) return res.status(404).json({ message: 'Submission not found' });
+  res.json({
+    id:         submission.id,
+    status:     submission.status,       // 'pending' | 'approved' | 'rejected'
+    name:       submission.name,
+    project:    submission.project,
+    country:    submission.country,
+    created_at: submission.created_at,
+  });
+});
+
+// DELETE cancel submission โดย user (เฉพาะ pending เท่านั้น)
+app.delete('/api/submissions/:id', (req, res) => {
+  const idx = submissions.findIndex(s => s.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'Submission not found' });
+  if (submissions[idx].status !== 'pending') {
+    return res.status(400).json({ message: 'Can only cancel pending submissions' });
+  }
+  submissions.splice(idx, 1);
+  res.json({ message: 'Submission cancelled' });
+});
+
+
 // ─── ROUTES: Admin ────────────────────────────────────────────────────────────
 
 // GET all submissions (admin view)
