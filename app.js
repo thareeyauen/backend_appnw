@@ -17,7 +17,14 @@ let people = [
   { id: 10, name: 'Khamla Phomvihane', name_th: 'คำลา พรหมวิหาร', project: 'Hydro Energy Watch', project_th: '', location: 'Laos', country: '', position: '', position_th: '', network: '', tags: [{ label: 'Energy' }, { label: 'Policy' }, { label: 'Monitoring' }], email: 'khamla.p@laosenergy.gov', note: 'Policy advisor tracking dam impact on Mekong communities. Interested in open monitoring tools.' }
 ];
 
-// ─── 2. Staging Data (submitted by users, waiting for admin approval) ─────────
+// ─── 2. Users (login accounts) ───────────────────────────────────────────────
+let users = [
+  { id: 1, name: 'Saranchanok', email: 'saranchanok@hand.co.th', type: 'User',  password: 'changeme' },
+  { id: 2, name: 'Admin01',     email: 'admin01@hand.co.th',     type: 'Admin', password: 'changeme' },
+];
+let nextUserId = 3;
+
+// ─── 3. Staging Data (submitted by users, waiting for admin approval) ─────────
 let submissions = [];
 let nextSubmissionId = 1;
 
@@ -41,6 +48,22 @@ app.get('/api/people/:id', (req, res) => {
   const person = people.find(p => p.id === parseInt(req.params.id));
   if (!person) return res.status(404).json({ message: 'Person not found' });
   res.json(person);
+});
+
+// PUT update an approved person by ID (admin only)
+app.put('/api/people/:id', (req, res) => {
+  const idx = people.findIndex(p => p.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'Person not found' });
+  people[idx] = { ...people[idx], ...req.body, id: people[idx].id };
+  res.json({ message: 'Updated', data: people[idx] });
+});
+
+// DELETE an approved person by ID (admin only)
+app.delete('/api/people/:id', (req, res) => {
+  const idx = people.findIndex(p => p.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'Person not found' });
+  people.splice(idx, 1);
+  res.json({ message: 'Deleted' });
 });
 
 // POST new submission from user form (soft validation — ใส่แค่ช่องเดียวก็ได้)
@@ -101,6 +124,49 @@ app.delete('/api/submissions/:id', (req, res) => {
   res.json({ message: 'Submission cancelled' });
 });
 
+
+// ─── ROUTES: Users ────────────────────────────────────────────────────────────
+
+// GET all users
+app.get('/api/users', (req, res) => {
+  res.json(users.map(({ password, ...u }) => u));
+});
+
+// GET a single user by ID
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ message: 'User not found' });
+  const { password, ...safe } = user;
+  res.json(safe);
+});
+
+// POST create a new user
+app.post('/api/users', (req, res) => {
+  const { name, email, type, password } = req.body;
+  const newUser = { id: nextUserId++, name: name || '', email: email || '', type: type || 'User', password: password || 'changeme' };
+  users.push(newUser);
+  const { password: _, ...safe } = newUser;
+  res.status(201).json({ message: 'User created', data: safe });
+});
+
+// PUT update a user (name, email, type only — password handled separately)
+app.put('/api/users/:id', (req, res) => {
+  const idx = users.findIndex(u => u.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'User not found' });
+  const { password, ...updates } = req.body;
+  users[idx] = { ...users[idx], ...updates, id: users[idx].id };
+  if (password) users[idx].password = password;
+  const { password: _, ...safe } = users[idx];
+  res.json({ message: 'Updated', data: safe });
+});
+
+// DELETE a user
+app.delete('/api/users/:id', (req, res) => {
+  const idx = users.findIndex(u => u.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ message: 'User not found' });
+  users.splice(idx, 1);
+  res.json({ message: 'Deleted' });
+});
 
 // ─── ROUTES: Admin ────────────────────────────────────────────────────────────
 
