@@ -17,6 +17,14 @@ function getById(id) {
   return users.find(u => u.id === id) || null;
 }
 
+function findById(id) {
+  return users.find(u => u.id === id) || null;
+}
+
+function findByEmail(email) {
+  return users.find(u => u.email === email) || null;
+}
+
 function create(data) {
   const newUser = {
     id: nextId++,
@@ -45,4 +53,4 @@ function remove(id) {
   return true;
 }
 
-module.exports = { getAll, getById, create, update, remove, safe };
+module.exports = { getAll, getById, findById, findByEmail, create, update, remove, safe };
