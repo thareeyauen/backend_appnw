@@ -18,7 +18,7 @@ app.use('/api/submissions', requireAuth, require('./routes/submissions'));
 // Admin only
 app.use('/api/users',       requireAdmin, require('./routes/users'));
 app.use('/api/user-types',  requireAdmin, require('./routes/userTypes'));
-app.use('/api/expertise',   requireAdmin, require('./routes/expertise'));
+app.use('/api/expertise',   require('./routes/expertise'));         // GET public, POST/PUT/DELETE → admin (middleware in route)
 app.use('/api/admin',       requireAdmin, require('./routes/admin'));
 
 app.listen(PORT, () => {

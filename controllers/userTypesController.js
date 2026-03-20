@@ -1,4 +1,5 @@
 const UserTypes = require('../models/userTypes');
+const Users = require('../models/users');
 
 function getAll(req, res) {
   res.json(UserTypes.getAll());
@@ -17,8 +18,11 @@ function update(req, res) {
 }
 
 function remove(req, res) {
-  const ok = UserTypes.remove(parseInt(req.params.id));
-  if (!ok) return res.status(404).json({ message: 'User type not found' });
+  const id = parseInt(req.params.id);
+  const item = UserTypes.getById(id);
+  if (!item) return res.status(404).json({ message: 'User type not found' });
+  UserTypes.remove(id);
+  Users.clearByType(item.label);
   res.json({ message: 'Deleted' });
 }
 

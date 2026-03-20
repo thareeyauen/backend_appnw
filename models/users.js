@@ -53,4 +53,8 @@ function remove(id) {
   return true;
 }
 
-module.exports = { getAll, getById, findById, findByEmail, create, update, remove, safe };
+function clearByType(label) {
+  users.forEach(u => { if (u.type === label) u.type = ''; });
+}
+
+module.exports = { getAll, getById, findById, findByEmail, create, update, remove, safe, clearByType };
