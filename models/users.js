@@ -1,6 +1,7 @@
 let users = [
   { id: 1, name: 'Saranchanok', email: 'saranchanok@hand.co.th', type: 'User',  password: 'changeme' },
   { id: 2, name: 'Admin01',     email: 'admin01@hand.co.th',     type: 'Admin', password: 'changeme' },
+  { id: 3, name: 'MJ',     email: 'MJ@hand.co.th',     type: 'User', password: 'changeme' },
 ];
 let nextId = 3;
 
