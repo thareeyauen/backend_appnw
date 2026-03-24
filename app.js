@@ -1,9 +1,11 @@
+require('dotenv').config({ path: '.env.production' });
 const express = require('express');
 const cors = require('cors');
 const { requireAuth, requireAdmin } = require('./middleware/auth');
+const { connect } = require('./db');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -21,11 +23,18 @@ app.use('/api/user-types',  requireAdmin, require('./routes/userTypes'));
 app.use('/api/expertise',   require('./routes/expertise'));         // GET public, POST/PUT/DELETE → admin (middleware in route)
 app.use('/api/admin',       requireAdmin, require('./routes/admin'));
 
-app.listen(PORT, () => {
-  console.log(`API running on http://localhost:${PORT}`);
-  console.log(`  Auth    → POST /api/auth/login`);
-  console.log(`  Me      → GET  /api/auth/me`);
-  console.log(`  Public  → GET  /api/people`);
-  console.log(`  Submit  → POST /api/submissions  [auth]`);
-  console.log(`  Admin   → GET  /api/admin/submissions  [admin]`);
-});
+connect()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`API running on http://localhost:${PORT}`);
+      console.log(`  Auth    → POST /api/auth/login`);
+      console.log(`  Me      → GET  /api/auth/me`);
+      console.log(`  Public  → GET  /api/people`);
+      console.log(`  Submit  → POST /api/submissions  [auth]`);
+      console.log(`  Admin   → GET  /api/admin/submissions  [admin]`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to connect to MongoDB:', err.message);
+    process.exit(1);
+  });

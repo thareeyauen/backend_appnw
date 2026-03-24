@@ -1,36 +1,34 @@
-let userTypeList = [
-  { id: 1, label: 'User' },
-  { id: 2, label: 'Admin' },
-];
-let nextId = 3;
+const mongoose = require('mongoose');
 
-function getAll() {
-  return userTypeList;
+const userTypeSchema = new mongoose.Schema({
+  label:       { type: String, required: true },
+  description: { type: String, default: '' },
+}, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });
+
+const UserTypeModel = mongoose.model('UserType', userTypeSchema);
+
+async function getAll() {
+  return UserTypeModel.find();
 }
 
-function getById(id) {
-  return userTypeList.find(t => t.id === id) || null;
+async function getById(id) {
+  return UserTypeModel.findById(id);
 }
 
-function create(label, description) {
-  const newItem = { id: nextId++, label: label.trim(), description: (description || '').trim() };
-  userTypeList.push(newItem);
-  return newItem;
+async function create(label, description) {
+  return UserTypeModel.create({ label: label.trim(), description: (description || '').trim() });
 }
 
-function update(id, data) {
-  const idx = userTypeList.findIndex(t => t.id === id);
-  if (idx === -1) return null;
-  if (data.label !== undefined && data.label.trim()) userTypeList[idx].label = data.label.trim();
-  if (data.description !== undefined) userTypeList[idx].description = data.description.trim();
-  return userTypeList[idx];
+async function update(id, data) {
+  const updates = {};
+  if (data.label !== undefined && data.label.trim()) updates.label = data.label.trim();
+  if (data.description !== undefined) updates.description = data.description.trim();
+  return UserTypeModel.findByIdAndUpdate(id, updates, { new: true });
 }
 
-function remove(id) {
-  const idx = userTypeList.findIndex(t => t.id === id);
-  if (idx === -1) return false;
-  userTypeList.splice(idx, 1);
-  return true;
+async function remove(id) {
+  const result = await UserTypeModel.findByIdAndDelete(id);
+  return !!result;
 }
 
 module.exports = { getAll, getById, create, update, remove };

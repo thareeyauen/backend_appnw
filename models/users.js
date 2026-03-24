@@ -1,61 +1,63 @@
-let users = [
-  { id: 1, name: 'Saranchanok', email: 'saranchanok@hand.co.th', type: 'User',  password: 'changeme' },
-  { id: 2, name: 'Admin01',     email: 'admin01@hand.co.th',     type: 'Admin', password: 'changeme' },
-  { id: 3, name: 'MJ',     email: 'MJ@hand.co.th',     type: 'User', password: 'changeme' },
-];
-let nextId = 3;
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name:     { type: String, default: '' },
+  email:    { type: String, required: true, unique: true },
+  type:     { type: String, default: 'User' },
+  password: { type: String, required: true },
+}, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });
+
+const UserModel = mongoose.model('User', userSchema);
 
 function safe(user) {
-  const { password, ...rest } = user;
+  const obj = user.toObject ? user.toObject() : user;
+  const { password, _id, __v, ...rest } = obj;
+  rest.id = (user._id || obj._id).toString();
   return rest;
 }
 
-function getAll() {
+async function getAll() {
+  const users = await UserModel.find();
   return users.map(safe);
 }
 
-function getById(id) {
-  return users.find(u => u.id === id) || null;
+async function getById(id) {
+  return UserModel.findById(id);
 }
 
-function findById(id) {
-  return users.find(u => u.id === id) || null;
+async function findById(id) {
+  return UserModel.findById(id);
 }
 
-function findByEmail(email) {
-  return users.find(u => u.email === email) || null;
+async function findByEmail(email) {
+  return UserModel.findOne({ email });
 }
 
-function create(data) {
-  const newUser = {
-    id: nextId++,
-    name: data.name || '',
-    email: data.email || '',
-    type: data.type || 'User',
+async function create(data) {
+  const user = await UserModel.create({
+    name:     data.name     || '',
+    email:    data.email    || '',
+    type:     data.type     || 'User',
     password: data.password || 'changeme',
-  };
-  users.push(newUser);
-  return safe(newUser);
+  });
+  return safe(user);
 }
 
-function update(id, data) {
-  const idx = users.findIndex(u => u.id === id);
-  if (idx === -1) return null;
+async function update(id, data) {
   const { password, ...updates } = data;
-  users[idx] = { ...users[idx], ...updates, id: users[idx].id };
-  if (password) users[idx].password = password;
-  return safe(users[idx]);
+  if (password) updates.password = password;
+  const user = await UserModel.findByIdAndUpdate(id, updates, { new: true });
+  if (!user) return null;
+  return safe(user);
 }
 
-function remove(id) {
-  const idx = users.findIndex(u => u.id === id);
-  if (idx === -1) return false;
-  users.splice(idx, 1);
-  return true;
+async function remove(id) {
+  const result = await UserModel.findByIdAndDelete(id);
+  return !!result;
 }
 
-function clearByType(label) {
-  users.forEach(u => { if (u.type === label) u.type = ''; });
+async function clearByType(label) {
+  await UserModel.updateMany({ type: label }, { $set: { type: '' } });
 }
 
 module.exports = { getAll, getById, findById, findByEmail, create, update, remove, safe, clearByType };

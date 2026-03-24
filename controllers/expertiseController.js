@@ -1,25 +1,41 @@
 const Expertise = require('../models/expertise');
 
-function getAll(req, res) {
-  res.json(Expertise.getAll());
+async function getAll(req, res) {
+  try {
+    res.json(await Expertise.getAll());
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 }
 
-function create(req, res) {
-  const { label, description } = req.body;
-  if (!label || !label.trim()) return res.status(400).json({ message: 'label is required' });
-  res.status(201).json(Expertise.create(label, description));
+async function create(req, res) {
+  try {
+    const { label, description } = req.body;
+    if (!label || !label.trim()) return res.status(400).json({ message: 'label is required' });
+    res.status(201).json(await Expertise.create(label, description));
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
 }
 
-function update(req, res) {
-  const item = Expertise.update(parseInt(req.params.id), req.body);
-  if (!item) return res.status(404).json({ message: 'Expertise not found' });
-  res.json(item);
+async function update(req, res) {
+  try {
+    const item = await Expertise.update(req.params.id, req.body);
+    if (!item) return res.status(404).json({ message: 'Expertise not found' });
+    res.json(item);
+  } catch (err) {
+    res.status(404).json({ message: 'Expertise not found' });
+  }
 }
 
-function remove(req, res) {
-  const ok = Expertise.remove(parseInt(req.params.id));
-  if (!ok) return res.status(404).json({ message: 'Expertise not found' });
-  res.json({ message: 'Deleted' });
+async function remove(req, res) {
+  try {
+    const ok = await Expertise.remove(req.params.id);
+    if (!ok) return res.status(404).json({ message: 'Expertise not found' });
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(404).json({ message: 'Expertise not found' });
+  }
 }
 
 module.exports = { getAll, create, update, remove };

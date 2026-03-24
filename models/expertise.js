@@ -1,38 +1,34 @@
-let expertiseList = [
-  { id: 1, label: 'Open Data', description: 'การเปิดเผยข้อมูลสาธารณะเพื่อให้ทุกคนเข้าถึงและนำไปใช้ได้' },
-  { id: 2, label: 'Public Procurement', description: 'การจัดซื้อจัดจ้างภาครัฐอย่างโปร่งใสและตรวจสอบได้' },
-  { id: 3, label: 'WhistleBlower', description: 'การแจ้งเบาะแสและปกป้องผู้เปิดเผยข้อมูลทุจริต' },
-  { id: 4, label: 'Business integrity', description: 'ธรรมาภิบาลและจริยธรรมทางธุรกิจ' },
-];
-let nextId = 5;
+const mongoose = require('mongoose');
 
-function getAll() {
-  return expertiseList;
+const expertiseSchema = new mongoose.Schema({
+  label:       { type: String, required: true },
+  description: { type: String, default: '' },
+}, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });
+
+const ExpertiseModel = mongoose.model('Expertise', expertiseSchema);
+
+async function getAll() {
+  return ExpertiseModel.find();
 }
 
-function getById(id) {
-  return expertiseList.find(e => e.id === id) || null;
+async function getById(id) {
+  return ExpertiseModel.findById(id);
 }
 
-function create(label, description) {
-  const newItem = { id: nextId++, label: label.trim(), description: (description || '').trim() };
-  expertiseList.push(newItem);
-  return newItem;
+async function create(label, description) {
+  return ExpertiseModel.create({ label: label.trim(), description: (description || '').trim() });
 }
 
-function update(id, data) {
-  const idx = expertiseList.findIndex(e => e.id === id);
-  if (idx === -1) return null;
-  if (data.label !== undefined && data.label.trim()) expertiseList[idx].label = data.label.trim();
-  if (data.description !== undefined) expertiseList[idx].description = data.description.trim();
-  return expertiseList[idx];
+async function update(id, data) {
+  const updates = {};
+  if (data.label !== undefined && data.label.trim()) updates.label = data.label.trim();
+  if (data.description !== undefined) updates.description = data.description.trim();
+  return ExpertiseModel.findByIdAndUpdate(id, updates, { new: true });
 }
 
-function remove(id) {
-  const idx = expertiseList.findIndex(e => e.id === id);
-  if (idx === -1) return false;
-  expertiseList.splice(idx, 1);
-  return true;
+async function remove(id) {
+  const result = await ExpertiseModel.findByIdAndDelete(id);
+  return !!result;
 }
 
 module.exports = { getAll, getById, create, update, remove };

@@ -1,58 +1,70 @@
-let submissions = [];
-let nextId = 1;
+const mongoose = require('mongoose');
 
-function getAll(status) {
-  if (status) return submissions.filter(s => s.status === status);
-  return submissions;
+const tagSchema = new mongoose.Schema({ label: String }, { _id: false });
+
+const submissionSchema = new mongoose.Schema({
+  name:        { type: String, default: '' },
+  name_th:     { type: String, default: '' },
+  project:     { type: String, default: '' },
+  project_th:  { type: String, default: '' },
+  location:    { type: String, default: '' },
+  country:     { type: String, default: '' },
+  position:    { type: String, default: '' },
+  position_th: { type: String, default: '' },
+  network:     { type: String, default: '' },
+  tags:        { type: [tagSchema], default: [] },
+  email:       { type: String, default: '' },
+  note:        { type: String, default: '' },
+  status:      { type: String, default: 'pending' },
+  created_at:  { type: Date, default: Date.now },
+  reviewed_at: { type: Date, default: null },
+}, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });
+
+const SubmissionModel = mongoose.model('Submission', submissionSchema);
+
+async function getAll(status) {
+  if (status) return SubmissionModel.find({ status });
+  return SubmissionModel.find();
 }
 
-function getById(id) {
-  return submissions.find(s => s.id === id) || null;
+async function getById(id) {
+  return SubmissionModel.findById(id);
 }
 
-function create(data) {
-  const newSubmission = {
-    id: nextId++,
-    name: data.name || '',
-    name_th: data.name_th || '',
-    project: data.project || '',
-    project_th: data.project_th || '',
-    location: data.location || '',
-    country: data.country || '',
-    position: data.position || '',
+async function create(data) {
+  return SubmissionModel.create({
+    name:        data.name        || '',
+    name_th:     data.name_th     || '',
+    project:     data.project     || '',
+    project_th:  data.project_th  || '',
+    location:    data.location    || '',
+    country:     data.country     || '',
+    position:    data.position    || '',
     position_th: data.position_th || '',
-    network: data.network || '',
-    tags: data.tags || [],
-    email: data.email || '',
-    note: data.note || '',
-    status: 'pending',
-    created_at: new Date().toISOString(),
+    network:     data.network     || '',
+    tags:        data.tags        || [],
+    email:       data.email       || '',
+    note:        data.note        || '',
+    status:      'pending',
+    created_at:  new Date(),
     reviewed_at: null,
-  };
-  submissions.push(newSubmission);
-  return newSubmission;
+  });
 }
 
-function remove(id) {
-  const idx = submissions.findIndex(s => s.id === id);
-  if (idx === -1) return null;
-  return submissions[idx];
-}
-
-function removePending(id) {
-  const idx = submissions.findIndex(s => s.id === id);
-  if (idx === -1) return { error: 'not_found' };
-  if (submissions[idx].status !== 'pending') return { error: 'not_pending' };
-  submissions.splice(idx, 1);
+async function removePending(id) {
+  const submission = await SubmissionModel.findById(id);
+  if (!submission) return { error: 'not_found' };
+  if (submission.status !== 'pending') return { error: 'not_pending' };
+  await SubmissionModel.findByIdAndDelete(id);
   return { ok: true };
 }
 
-function setStatus(id, status) {
-  const submission = submissions.find(s => s.id === id);
-  if (!submission) return null;
-  submission.status = status;
-  submission.reviewed_at = new Date().toISOString();
-  return submission;
+async function setStatus(id, status) {
+  return SubmissionModel.findByIdAndUpdate(
+    id,
+    { status, reviewed_at: new Date() },
+    { new: true }
+  );
 }
 
 module.exports = { getAll, getById, create, removePending, setStatus };
