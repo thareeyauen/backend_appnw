@@ -39,4 +39,28 @@ async function remove(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, update, remove };
+async function uploadPhoto(req, res) {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const photo = `/uploads/${req.file.filename}`;
+    const person = await People.update(req.params.id, { photo });
+    if (!person) return res.status(404).json({ message: 'Person not found' });
+    res.json({ message: 'Photo uploaded', photo });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+async function uploadNameCard(req, res) {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const nameCard = `/uploads/${req.file.filename}`;
+    const person = await People.update(req.params.id, { nameCard });
+    if (!person) return res.status(404).json({ message: 'Person not found' });
+    res.json({ message: 'Name card uploaded', nameCard });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+module.exports = { getAll, getOne, update, remove, uploadPhoto, uploadNameCard };
