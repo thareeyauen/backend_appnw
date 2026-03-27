@@ -36,4 +36,22 @@ async function me(req, res) {
   }
 }
 
-module.exports = { login, me };
+async function changePassword(req, res) {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: 'กรุณากรอก oldPassword และ newPassword' });
+    }
+    const user = await Users.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.password !== oldPassword) {
+      return res.status(400).json({ message: 'รหัสผ่านเดิมไม่ถูกต้อง' });
+    }
+    await Users.update(req.user.id, { password: newPassword });
+    res.json({ message: 'เปลี่ยนรหัสผ่านสำเร็จ' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+module.exports = { login, me, changePassword };
