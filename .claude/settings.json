@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('dotenv'\\).config\\({ path: '.env.production' }\\); console.log\\('MONGO_URI:', process.env.MONGO_URI ? 'loaded' : 'MISSING'\\)\")"
+    ]
+  }
+}
