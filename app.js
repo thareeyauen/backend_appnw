@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '.env.production' });
+require('dotenv').config({ path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env' });
 const express = require('express');
 const cors = require('cors');
 const { requireAuth, requireAdmin } = require('./middleware/auth');
@@ -17,6 +17,7 @@ app.use('/api/people',      require('./routes/people'));
 
 // Authenticated users
 app.use('/api/submissions', requireAuth, require('./routes/submissions'));
+app.use('/api/feedback',    requireAuth, require('./routes/feedback'));
 
 // Admin only
 app.use('/api/users',       requireAdmin, require('./routes/users'));
