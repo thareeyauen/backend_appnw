@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
+const SALT_ROUNDS = 10;
 
 const userSchema = new mongoose.Schema({
   name:     { type: String, default: '' },
@@ -6,6 +9,15 @@ const userSchema = new mongoose.Schema({
   type:     { type: String, default: 'User' },
   password: { type: String, required: true },
 }, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });
+
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+});
+
+userSchema.methods.comparePassword = function (plain) {
+  return bcrypt.compare(plain, this.password);
+};
 
 const UserModel = mongoose.model('User', userSchema);
 
@@ -34,20 +46,24 @@ async function findByEmail(email) {
 }
 
 async function create(data) {
-  const user = await UserModel.create({
+  const user = new UserModel({
     name:     data.name     || '',
     email:    data.email    || '',
     type:     data.type     || 'User',
     password: data.password || 'changeme',
   });
+  await user.save();
   return safe(user);
 }
 
 async function update(id, data) {
-  const { password, ...updates } = data;
-  if (password) updates.password = password;
-  const user = await UserModel.findByIdAndUpdate(id, updates, { new: true });
+  const user = await UserModel.findById(id);
   if (!user) return null;
+  if (data.name !== undefined)     user.name     = data.name;
+  if (data.email !== undefined)    user.email    = data.email;
+  if (data.type !== undefined)     user.type     = data.type;
+  if (data.password)               user.password = data.password;
+  await user.save();
   return safe(user);
 }
 

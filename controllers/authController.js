@@ -10,7 +10,7 @@ async function login(req, res) {
     }
 
     const user = await Users.findByEmail(email);
-    if (!user || user.password !== password) {
+    if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -44,7 +44,7 @@ async function changePassword(req, res) {
     }
     const user = await Users.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
-    if (user.password !== oldPassword) {
+    if (!(await user.comparePassword(oldPassword))) {
       return res.status(400).json({ message: 'รหัสผ่านเดิมไม่ถูกต้อง' });
     }
     await Users.update(req.user.id, { password: newPassword });

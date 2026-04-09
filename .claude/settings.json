@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"require\\('dotenv'\\).config\\({ path: '.env.production' }\\); console.log\\('MONGO_URI:', process.env.MONGO_URI ? 'loaded' : 'MISSING'\\)\")"
+      "Bash(node -e \"require\\('dotenv'\\).config\\({ path: '.env.production' }\\); console.log\\('MONGO_URI:', process.env.MONGO_URI ? 'loaded' : 'MISSING'\\)\")",
+      "Bash(node -e \"const crypto = require\\('crypto'\\); for\\(let i=0;i<16;i++\\) console.log\\(crypto.randomBytes\\(4\\).toString\\('base64url'\\)\\)\")",
+      "Bash(node -e ':*)",
+      "Bash(node seed.js)"
     ]
   }
 }

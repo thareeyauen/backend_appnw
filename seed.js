@@ -84,11 +84,25 @@ async function seed() {
 
   // Seed Users
   await Promise.all([
-    Users.create({ name: 'Saranchanok', email: 'saranchanok@hand.co.th', type: 'User',  password: 'changeme' }),
-    Users.create({ name: 'Admin01',     email: 'admin01@hand.co.th',     type: 'Admin', password: 'changeme' }),
-    Users.create({ name: 'MJ',          email: 'MJ@hand.co.th',          type: 'User',  password: 'changeme' }),
+    Users.create({ name: 'Admin01',      email: 'admin01@hand.co.th',      type: 'Admin', password: 'changeme' }),
+    Users.create({ name: 'Suppaut',      email: 'suppaut@hand.co.th',      type: 'User',  password: 'czU-8w' }),
+    Users.create({ name: 'Bhalangrata',  email: 'bhalangrata@hand.co.th',  type: 'User',  password: 'rHeXkA' }),
+    Users.create({ name: 'Yuthana',      email: 'yuthana@hand.co.th',      type: 'User',  password: '8v8MKg' }),
+    Users.create({ name: 'Nanwadee',     email: 'nanwadee@hand.co.th',     type: 'User',  password: 'js2vAA' }),
+    Users.create({ name: 'Patcharee',    email: 'patcharee@hand.co.th',    type: 'User',  password: '3OzErQ' }),
+    Users.create({ name: 'Supatja',      email: 'supatja@hand.co.th',      type: 'User',  password: 'oD_VTA' }),
+    Users.create({ name: 'Charassri',    email: 'charassri@hand.co.th',    type: 'User',  password: 'mhryXw' }),
+    Users.create({ name: 'Rakpa',        email: 'rakpa@hand.co.th',        type: 'User',  password: '8gTaUg' }),
+    Users.create({ name: 'Wasupol',      email: 'wasupol@hand.co.th',      type: 'User',  password: '4P7wRQ' }),
+    Users.create({ name: 'Saranchanok',  email: 'saranchanok@hand.co.th',  type: 'User',  password: '4AjIMA' }),
+    Users.create({ name: 'Thareeya',     email: 'thareeya@hand.co.th',     type: 'User',  password: 'JJ938A' }),
+    Users.create({ name: 'Jatupron',     email: 'jatupron@hand.co.th',     type: 'User',  password: 'zkgyGg' }),
+    Users.create({ name: 'Thanakan',     email: 'thanakan@hand.co.th',     type: 'User',  password: 'I3cWSQ' }),
+    Users.create({ name: 'Suphachai',    email: 'suphachai@hand.co.th',    type: 'User',  password: 'bmbCPg' }),
+    Users.create({ name: 'Suppawit',     email: 'suppawit@hand.co.th',     type: 'User',  password: '-3WZ_Q' }),
+    Users.create({ name: 'Sasathorn',    email: 'sasathorn@hand.co.th',    type: 'User',  password: 'UxCAGw' }),
   ]);
-  console.log('Seeded: Users (3)');
+  console.log('Seeded: Users (17)');
 
   await mongoose.disconnect();
   console.log('Done!');

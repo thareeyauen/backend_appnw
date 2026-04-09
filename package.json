@@ -8,11 +8,12 @@
   "main": "app.js",
   "scripts": {
     "dev": "node app.js",
-    "start": "node -r dotenv/config app.js dotenv_config_path=.env.production",
+    "start": "node app.js",
     "seed": "node seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.0",
     "express": "^5.2.1",
