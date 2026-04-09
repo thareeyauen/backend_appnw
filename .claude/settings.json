@@ -4,7 +4,13 @@
       "Bash(node -e \"require\\('dotenv'\\).config\\({ path: '.env.production' }\\); console.log\\('MONGO_URI:', process.env.MONGO_URI ? 'loaded' : 'MISSING'\\)\")",
       "Bash(node -e \"const crypto = require\\('crypto'\\); for\\(let i=0;i<16;i++\\) console.log\\(crypto.randomBytes\\(4\\).toString\\('base64url'\\)\\)\")",
       "Bash(node -e ':*)",
-      "Bash(node seed.js)"
+      "Bash(node seed.js)",
+      "Read(//c/Users/Thare/**)",
+      "Bash(curl -s -X POST http://localhost:3000/api/submissions -H 'Authorization: Bearer test' -F name=TestUser -F 'tags=[{\"label\":\"Open Data\"}]' -F avatar=@/dev/null)",
+      "Read(//c/Users/Thare/backend_appnw/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Thare\\appnw\\src\\page"
     ]
   }
 }

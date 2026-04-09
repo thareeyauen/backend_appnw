@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
+app.use('/avatar',  express.static(require('path').join(__dirname, 'avatar')));
 
 // Public
 app.use('/api/auth',        require('./routes/auth'));

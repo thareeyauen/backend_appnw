@@ -2,7 +2,12 @@ const Submissions = require('../models/submissions');
 
 async function create(req, res) {
   try {
-    const submission = await Submissions.create(req.body);
+    const data = { ...req.body };
+    if (typeof data.tags === 'string') {
+      try { data.tags = JSON.parse(data.tags); } catch { data.tags = []; }
+    }
+    if (req.file) data.avatar = `/avatar/${req.file.filename}`;
+    const submission = await Submissions.create(data);
     res.status(201).json({ message: 'Submission received', data: submission });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

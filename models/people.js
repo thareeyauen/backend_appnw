@@ -15,6 +15,7 @@ const peopleSchema = new mongoose.Schema({
   tags:        { type: [tagSchema], default: [] },
   email:       { type: String, default: '' },
   note:        { type: String, default: '' },
+  avatar:      { type: String, default: '' },
   photo:       { type: String, default: '' },
   nameCard:    { type: String, default: '' },
 }, { toJSON: { virtuals: true, versionKey: false, transform(doc, ret) { delete ret._id; } } });

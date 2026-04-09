@@ -42,6 +42,7 @@ async function approve(req, res) {
       tags:        body.tags        ?? submission.tags,
       email:       body.email       ?? submission.email,
       note:        body.note        ?? submission.note,
+      avatar:      body.avatar      ?? submission.avatar,
     });
 
     await Submissions.setStatus(submission.id, 'approved');

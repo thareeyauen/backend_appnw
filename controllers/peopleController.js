@@ -39,6 +39,18 @@ async function remove(req, res) {
   }
 }
 
+async function uploadAvatar(req, res) {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const avatar = `/avatar/${req.file.filename}`;
+    const person = await People.update(req.params.id, { avatar });
+    if (!person) return res.status(404).json({ message: 'Person not found' });
+    res.json({ message: 'Avatar uploaded', avatar });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 async function uploadPhoto(req, res) {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -63,4 +75,4 @@ async function uploadNameCard(req, res) {
   }
 }
 
-module.exports = { getAll, getOne, update, remove, uploadPhoto, uploadNameCard };
+module.exports = { getAll, getOne, update, remove, uploadAvatar, uploadPhoto, uploadNameCard };
