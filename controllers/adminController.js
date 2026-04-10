@@ -1,5 +1,6 @@
 const Submissions = require('../models/submissions');
 const People = require('../models/people');
+const { deleteFromR2 } = require('../utils/r2Upload');
 
 async function getAllSubmissions(req, res) {
   try {
@@ -61,6 +62,12 @@ async function reject(req, res) {
     if (submission.status !== 'pending') {
       return res.status(400).json({ message: `Submission is already ${submission.status}` });
     }
+
+    // Delete files from R2 when rejecting
+    await Promise.allSettled([
+      deleteFromR2(submission.avatar),
+      deleteFromR2(submission.nameCard),
+    ]);
 
     const updated = await Submissions.setStatus(submission.id, 'rejected');
     res.json({ message: 'Submission rejected', data: updated });
