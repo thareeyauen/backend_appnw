@@ -2,7 +2,7 @@ const People = require('../models/people');
 
 async function getAll(req, res) {
   try {
-    const people = await People.getAll(req.query.location);
+    const people = await People.getAll(req.query.national);
     res.json(people);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -66,7 +66,7 @@ async function uploadPhoto(req, res) {
 async function uploadNameCard(req, res) {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-    const nameCard = `/uploads/${req.file.filename}`;
+    const nameCard = `/namecard/${req.file.filename}`;
     const person = await People.update(req.params.id, { nameCard });
     if (!person) return res.status(404).json({ message: 'Person not found' });
     res.json({ message: 'Name card uploaded', nameCard });

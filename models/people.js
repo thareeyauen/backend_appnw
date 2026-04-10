@@ -7,13 +7,14 @@ const peopleSchema = new mongoose.Schema({
   name_th:     { type: String, default: '' },
   project:     { type: String, default: '' },
   project_th:  { type: String, default: '' },
-  location:    { type: String, default: '' },
+  national:    { type: String, default: '' },
   country:     { type: String, default: '' },
   position:    { type: String, default: '' },
   position_th: { type: String, default: '' },
   network:     { type: String, default: '' },
   tags:        { type: [tagSchema], default: [] },
   email:       { type: String, default: '' },
+  phone:       { type: String, default: '' },
   note:        { type: String, default: '' },
   avatar:      { type: String, default: '' },
   photo:       { type: String, default: '' },
@@ -22,12 +23,12 @@ const peopleSchema = new mongoose.Schema({
 
 const PeopleModel = mongoose.model('People', peopleSchema);
 
-async function getAll(location) {
-  if (location) {
-    const escaped = location.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return PeopleModel.find({ location: new RegExp(`^${escaped}$`, 'i') });
+async function getAll(national) {
+  if (national) {
+    const escaped = national.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return PeopleModel.find({ national: new RegExp(`^${escaped}$`, 'i') }).sort({ _id: -1 });
   }
-  return PeopleModel.find();
+  return PeopleModel.find().sort({ _id: -1 });
 }
 
 async function getById(id) {

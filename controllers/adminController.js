@@ -34,15 +34,17 @@ async function approve(req, res) {
       name_th:     body.name_th     ?? submission.name_th,
       project:     body.project     ?? submission.project,
       project_th:  body.project_th  ?? submission.project_th,
-      location:    body.location    ?? submission.location,
+      national:    body.national    ?? submission.national,
       country:     body.country     ?? submission.country,
       position:    body.position    ?? submission.position,
       position_th: body.position_th ?? submission.position_th,
       network:     body.network     ?? submission.network,
       tags:        body.tags        ?? submission.tags,
       email:       body.email       ?? submission.email,
+      phone:       body.phone       ?? submission.phone,
       note:        body.note        ?? submission.note,
       avatar:      body.avatar      ?? submission.avatar,
+      nameCard:    body.nameCard    ?? submission.nameCard,
     });
 
     await Submissions.setStatus(submission.id, 'approved');
